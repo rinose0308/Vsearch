@@ -9,6 +9,7 @@ export interface HolodexChannel {
   lang: string;
   inactive: boolean;
   description?: string;
+  top_topics?: string[];
 }
 
 export interface HolodexChannelDetail extends HolodexChannel {

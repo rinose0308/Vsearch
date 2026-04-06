@@ -13,15 +13,21 @@ export async function GET() {
 
   const channels = await fetchAllVtubers(apiKey);
 
-  const result = channels.map((ch) => ({
-    channelId: ch.id,
-    name: ch.name,
-    title: ch.name,
-    group: ch.org || "個人勢",
-    tags: [langToTag(ch.lang)],
-    thumbnail: ch.photo,
-    subscriberCount: String(ch.subscriber_count),
-  }));
+  const result = channels.map((ch) => {
+    const tags: string[] = [langToTag(ch.lang)];
+    if (ch.top_topics) {
+      tags.push(...ch.top_topics.slice(0, 5));
+    }
+    return {
+      channelId: ch.id,
+      name: ch.name,
+      title: ch.name,
+      group: ch.org || "個人勢",
+      tags,
+      thumbnail: ch.photo,
+      subscriberCount: String(ch.subscriber_count),
+    };
+  });
 
   return NextResponse.json(result);
 }

@@ -1,12 +1,22 @@
 "use client";
 
+const SUB_RANGES = [
+  { value: "all", label: "すべて" },
+  { value: "under1w", label: "1万未満" },
+  { value: "1w-10w", label: "1万〜10万" },
+  { value: "10w-100w", label: "10万〜100万" },
+  { value: "over100w", label: "100万以上" },
+];
+
 interface FilterPanelProps {
   allGroups: string[];
   allTags: string[];
   selectedGroups: string[];
   selectedTags: string[];
+  subRange: string;
   onGroupToggle: (g: string) => void;
   onTagToggle: (t: string) => void;
+  onSubRangeChange: (v: string) => void;
   onReset: () => void;
   mobileOpen?: boolean;
   onMobileClose?: () => void;
@@ -17,11 +27,13 @@ function FilterContent({
   allTags,
   selectedGroups,
   selectedTags,
+  subRange,
   onGroupToggle,
   onTagToggle,
+  onSubRangeChange,
   onReset,
 }: Omit<FilterPanelProps, "mobileOpen" | "onMobileClose">) {
-  const hasFilters = selectedGroups.length > 0 || selectedTags.length > 0;
+  const hasFilters = selectedGroups.length > 0 || selectedTags.length > 0 || subRange !== "all";
 
   return (
     <div className="space-y-5">
@@ -78,6 +90,31 @@ function FilterContent({
           ))}
         </div>
       </div>
+
+      {/* 登録者数フィルター */}
+      <div>
+        <h3 className="mb-2 text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">
+          登録者数
+        </h3>
+        <div className="space-y-1">
+          {SUB_RANGES.map((r) => (
+            <label
+              key={r.value}
+              className="flex cursor-pointer items-center gap-2 rounded-md px-2 py-1 text-sm hover:bg-purple-50 dark:hover:bg-gray-700"
+            >
+              <input
+                type="radio"
+                name="subRange"
+                value={r.value}
+                checked={subRange === r.value}
+                onChange={() => onSubRangeChange(r.value)}
+                className="accent-purple-500"
+              />
+              <span className="text-gray-700 dark:text-gray-300">{r.label}</span>
+            </label>
+          ))}
+        </div>
+      </div>
     </div>
   );
 }
@@ -87,8 +124,10 @@ export default function FilterPanel({
   allTags,
   selectedGroups,
   selectedTags,
+  subRange,
   onGroupToggle,
   onTagToggle,
+  onSubRangeChange,
   onReset,
   mobileOpen,
   onMobileClose,
@@ -102,8 +141,10 @@ export default function FilterPanel({
           allTags={allTags}
           selectedGroups={selectedGroups}
           selectedTags={selectedTags}
+          subRange={subRange}
           onGroupToggle={onGroupToggle}
           onTagToggle={onTagToggle}
+          onSubRangeChange={onSubRangeChange}
           onReset={onReset}
         />
       </aside>
@@ -132,8 +173,10 @@ export default function FilterPanel({
               allTags={allTags}
               selectedGroups={selectedGroups}
               selectedTags={selectedTags}
+              subRange={subRange}
               onGroupToggle={onGroupToggle}
               onTagToggle={onTagToggle}
+              onSubRangeChange={onSubRangeChange}
               onReset={onReset}
             />
             <button

@@ -17,6 +17,7 @@ export default function Home() {
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [sortKey, setSortKey] = useState<SortKey>("subscribers");
   const [mobileFilterOpen, setMobileFilterOpen] = useState(false);
+  const [subRange, setSubRange] = useState<string>("all");
 
   useEffect(() => {
     fetch("/api/channels")
@@ -52,13 +53,25 @@ export default function Home() {
       );
     }
 
+    // 登録者数フィルター
+    if (subRange !== "all") {
+      list = list.filter((v) => {
+        const n = parseInt(v.subscriberCount);
+        if (subRange === "under1w") return n < 10_000;
+        if (subRange === "1w-10w") return n >= 10_000 && n < 100_000;
+        if (subRange === "10w-100w") return n >= 100_000 && n < 1_000_000;
+        if (subRange === "over100w") return n >= 1_000_000;
+        return true;
+      });
+    }
+
     return [...list].sort((a, b) => {
       if (sortKey === "subscribers") {
         return parseInt(b.subscriberCount) - parseInt(a.subscriberCount);
       }
       return a.title.localeCompare(b.title, "ja");
     });
-  }, [allVtubers, query, selectedGroups, selectedTags, sortKey]);
+  }, [allVtubers, query, selectedGroups, selectedTags, sortKey, subRange]);
 
   // グループ・タグをデータから動的生成
   const allGroups = useMemo(() => {
@@ -85,6 +98,7 @@ export default function Home() {
     setSelectedGroups([]);
     setSelectedTags([]);
     setQuery("");
+    setSubRange("all");
   };
 
   return (
@@ -125,9 +139,9 @@ export default function Home() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4h18M7 8h10M11 12h2" />
               </svg>
               フィルター
-              {(selectedGroups.length + selectedTags.length) > 0 && (
+              {(selectedGroups.length + selectedTags.length + (subRange !== "all" ? 1 : 0)) > 0 && (
                 <span className="ml-1 rounded-full bg-purple-500 px-1.5 text-[10px] font-bold text-white">
-                  {selectedGroups.length + selectedTags.length}
+                  {selectedGroups.length + selectedTags.length + (subRange !== "all" ? 1 : 0)}
                 </span>
               )}
             </button>
@@ -141,8 +155,10 @@ export default function Home() {
             allTags={allTags}
             selectedGroups={selectedGroups}
             selectedTags={selectedTags}
+            subRange={subRange}
             onGroupToggle={toggleGroup}
             onTagToggle={toggleTag}
+            onSubRangeChange={setSubRange}
             onReset={resetFilters}
             mobileOpen={mobileFilterOpen}
             onMobileClose={() => setMobileFilterOpen(false)}
