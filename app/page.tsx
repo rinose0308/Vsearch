@@ -4,7 +4,6 @@ import { useEffect, useState, useMemo } from "react";
 import SearchBar from "@/components/SearchBar";
 import FilterPanel from "@/components/FilterPanel";
 import VTuberCard, { VTuberCardData } from "@/components/VTuberCard";
-import { VTuberGroup, VTuberTag } from "@/data/vtubers";
 
 type SortKey = "name" | "subscribers";
 
@@ -14,8 +13,8 @@ export default function Home() {
   const [error, setError] = useState<string | null>(null);
 
   const [query, setQuery] = useState("");
-  const [selectedGroups, setSelectedGroups] = useState<VTuberGroup[]>([]);
-  const [selectedTags, setSelectedTags] = useState<VTuberTag[]>([]);
+  const [selectedGroups, setSelectedGroups] = useState<string[]>([]);
+  const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [sortKey, setSortKey] = useState<SortKey>("subscribers");
   const [mobileFilterOpen, setMobileFilterOpen] = useState(false);
 
@@ -61,12 +60,23 @@ export default function Home() {
     });
   }, [allVtubers, query, selectedGroups, selectedTags, sortKey]);
 
-  const toggleGroup = (g: VTuberGroup) =>
+  // グループ・タグをデータから動的生成
+  const allGroups = useMemo(() => {
+    const set = new Set(allVtubers.map((v) => v.group));
+    return Array.from(set).sort();
+  }, [allVtubers]);
+
+  const allTags = useMemo(() => {
+    const set = new Set(allVtubers.flatMap((v) => v.tags));
+    return Array.from(set).sort();
+  }, [allVtubers]);
+
+  const toggleGroup = (g: string) =>
     setSelectedGroups((prev) =>
       prev.includes(g) ? prev.filter((x) => x !== g) : [...prev, g]
     );
 
-  const toggleTag = (t: VTuberTag) =>
+  const toggleTag = (t: string) =>
     setSelectedTags((prev) =>
       prev.includes(t) ? prev.filter((x) => x !== t) : [...prev, t]
     );
@@ -127,6 +137,8 @@ export default function Home() {
         <div className="flex gap-8">
           {/* Sidebar / Mobile drawer */}
           <FilterPanel
+            allGroups={allGroups}
+            allTags={allTags}
             selectedGroups={selectedGroups}
             selectedTags={selectedTags}
             onGroupToggle={toggleGroup}
@@ -167,7 +179,7 @@ export default function Home() {
               <div className="rounded-xl border border-red-200 bg-red-50 p-6 text-sm text-red-600 dark:border-red-800 dark:bg-red-900/20 dark:text-red-400">
                 <strong>エラー:</strong> {error}
                 <p className="mt-1 text-xs opacity-75">
-                  .env.local に YOUTUBE_API_KEY が設定されているか確認してください。
+                  .env.local に HOLODEX_API_KEY が設定されているか確認してください。
                 </p>
               </div>
             )}

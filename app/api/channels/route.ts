@@ -1,34 +1,27 @@
 import { NextResponse } from "next/server";
-import { VTUBERS } from "@/data/vtubers";
-import { fetchChannels } from "@/lib/youtube";
+import { fetchAllVtubers, langToTag } from "@/lib/holodex";
 
 export async function GET() {
-  const apiKey = process.env.YOUTUBE_API_KEY;
+  const apiKey = process.env.HOLODEX_API_KEY;
 
   if (!apiKey) {
     return NextResponse.json(
-      { error: "YOUTUBE_API_KEY が設定されていません" },
+      { error: "HOLODEX_API_KEY が設定されていません" },
       { status: 500 }
     );
   }
 
-  const channelIds = VTUBERS.map((v) => v.channelId);
+  const channels = await fetchAllVtubers(apiKey);
 
-  const youtubeData = await fetchChannels(channelIds, apiKey);
+  const result = channels.map((ch) => ({
+    channelId: ch.id,
+    name: ch.name,
+    title: ch.name,
+    group: ch.org || "個人勢",
+    tags: [langToTag(ch.lang)],
+    thumbnail: ch.photo,
+    subscriberCount: String(ch.subscriber_count),
+  }));
 
-  // Merge YouTube data with our local metadata
-  const merged = VTUBERS.map((v) => {
-    const yt = youtubeData.find((y) => y.channelId === v.channelId);
-    return {
-      ...v,
-      title: yt?.title ?? v.name,
-      thumbnail: yt?.thumbnail ?? "",
-      subscriberCount: yt?.subscriberCount ?? "0",
-      viewCount: yt?.viewCount ?? "0",
-      videoCount: yt?.videoCount ?? "0",
-      customUrl: yt?.customUrl,
-    };
-  });
-
-  return NextResponse.json(merged);
+  return NextResponse.json(result);
 }

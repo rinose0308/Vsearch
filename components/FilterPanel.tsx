@@ -1,19 +1,20 @@
 "use client";
 
-import { ALL_GROUPS, ALL_TAGS, VTuberGroup, VTuberTag } from "@/data/vtubers";
-
 interface FilterPanelProps {
-  selectedGroups: VTuberGroup[];
-  selectedTags: VTuberTag[];
-  onGroupToggle: (g: VTuberGroup) => void;
-  onTagToggle: (t: VTuberTag) => void;
+  allGroups: string[];
+  allTags: string[];
+  selectedGroups: string[];
+  selectedTags: string[];
+  onGroupToggle: (g: string) => void;
+  onTagToggle: (t: string) => void;
   onReset: () => void;
-  // mobile drawer
   mobileOpen?: boolean;
   onMobileClose?: () => void;
 }
 
 function FilterContent({
+  allGroups,
+  allTags,
   selectedGroups,
   selectedTags,
   onGroupToggle,
@@ -39,8 +40,8 @@ function FilterContent({
         <h3 className="mb-2 text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">
           グループ
         </h3>
-        <div className="space-y-1">
-          {ALL_GROUPS.map((g) => (
+        <div className="space-y-1 max-h-48 overflow-y-auto">
+          {allGroups.map((g) => (
             <label
               key={g}
               className="flex cursor-pointer items-center gap-2 rounded-md px-2 py-1 text-sm hover:bg-purple-50 dark:hover:bg-gray-700"
@@ -62,7 +63,7 @@ function FilterContent({
           タグ
         </h3>
         <div className="flex flex-wrap gap-1.5">
-          {ALL_TAGS.map((t) => (
+          {allTags.map((t) => (
             <button
               key={t}
               onClick={() => onTagToggle(t)}
@@ -82,6 +83,8 @@ function FilterContent({
 }
 
 export default function FilterPanel({
+  allGroups,
+  allTags,
   selectedGroups,
   selectedTags,
   onGroupToggle,
@@ -95,6 +98,8 @@ export default function FilterPanel({
       {/* Desktop sidebar */}
       <aside className="hidden md:block w-56 shrink-0">
         <FilterContent
+          allGroups={allGroups}
+          allTags={allTags}
           selectedGroups={selectedGroups}
           selectedTags={selectedTags}
           onGroupToggle={onGroupToggle}
@@ -123,6 +128,8 @@ export default function FilterPanel({
               </button>
             </div>
             <FilterContent
+              allGroups={allGroups}
+              allTags={allTags}
               selectedGroups={selectedGroups}
               selectedTags={selectedTags}
               onGroupToggle={onGroupToggle}

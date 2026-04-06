@@ -1,15 +1,14 @@
 "use client";
 
 import Image from "next/image";
-import { formatSubscriberCount } from "@/lib/youtube";
-import { VTuberGroup, VTuberTag } from "@/data/vtubers";
+import { formatSubscriberCount } from "@/lib/holodex";
 
 export interface VTuberCardData {
   channelId: string;
   name: string;
   title: string;
-  group: VTuberGroup;
-  tags: VTuberTag[];
+  group: string;
+  tags: string[];
   thumbnail: string;
   subscriberCount: string;
   customUrl?: string;
@@ -20,12 +19,14 @@ interface VTuberCardProps {
 }
 
 const GROUP_COLORS: Record<string, string> = {
-  "ホロライブ": "bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300",
-  "にじさんじ": "bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-300",
-  "ぶいすぽっ！": "bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-300",
+  "Hololive": "bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300",
+  "Nijisanji": "bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-300",
+  "VSpo": "bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-300",
   "個人勢": "bg-yellow-100 text-yellow-700 dark:bg-yellow-900/40 dark:text-yellow-300",
   "VShojo": "bg-pink-100 text-pink-700 dark:bg-pink-900/40 dark:text-pink-300",
   "NIJISANJI EN": "bg-orange-100 text-orange-700 dark:bg-orange-900/40 dark:text-orange-300",
+  "Hololive English": "bg-sky-100 text-sky-700 dark:bg-sky-900/40 dark:text-sky-300",
+  "Hololive Indonesia": "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300",
 };
 
 export default function VTuberCard({ data }: VTuberCardProps) {
