@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { formatSubscriberCount } from "@/lib/holodex";
 
 export interface VTuberCardData {
@@ -36,10 +37,8 @@ export default function VTuberCard({ data }: VTuberCardProps) {
     "bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300";
 
   return (
-    <a
-      href={channelUrl}
-      target="_blank"
-      rel="noopener noreferrer"
+    <Link
+      href={`/vtuber/${data.channelId}`}
       className="group flex flex-col rounded-2xl border border-gray-100 bg-white shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md active:scale-95 dark:border-gray-700 dark:bg-gray-800"
     >
       {/* Thumbnail */}
@@ -103,6 +102,6 @@ export default function VTuberCard({ data }: VTuberCardProps) {
           ))}
         </div>
       </div>
-    </a>
+    </Link>
   );
 }

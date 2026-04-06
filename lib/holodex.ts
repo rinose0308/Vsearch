@@ -11,6 +11,11 @@ export interface HolodexChannel {
   description?: string;
 }
 
+export interface HolodexChannelDetail extends HolodexChannel {
+  top_topics?: string[];
+  twitter?: string;
+}
+
 const HOLODEX_API_BASE = "https://holodex.net/api/v2";
 const FETCH_LIMIT = 50;
 const TOTAL_FETCH = 500; // 最大取得数
@@ -44,6 +49,19 @@ export async function fetchAllVtubers(apiKey: string): Promise<HolodexChannel[]>
   }
 
   return results;
+}
+
+export async function fetchChannel(channelId: string, apiKey: string): Promise<HolodexChannelDetail> {
+  const res = await fetch(`${HOLODEX_API_BASE}/channels/${channelId}`, {
+    headers: { "X-APIKEY": apiKey },
+    next: { revalidate: 3600 },
+  });
+
+  if (!res.ok) {
+    throw new Error(`Holodex API error: ${res.status}`);
+  }
+
+  return res.json();
 }
 
 export function formatSubscriberCount(count: number | string): string {
