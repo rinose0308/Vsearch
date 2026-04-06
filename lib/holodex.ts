@@ -46,11 +46,13 @@ export async function fetchAllVtubers(apiKey: string): Promise<HolodexChannel[]>
   return results;
 }
 
-export function formatSubscriberCount(count: number): string {
-  if (count >= 1_000_000) return `${(count / 1_000_000).toFixed(1)}M`;
-  if (count >= 10_000) return `${Math.floor(count / 10_000)}万`;
-  if (count >= 1_000) return `${(count / 1_000).toFixed(1)}K`;
-  return count.toString();
+export function formatSubscriberCount(count: number | string): string {
+  const n = typeof count === "string" ? parseInt(count, 10) : count;
+  if (isNaN(n)) return "非公開";
+  if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(1)}M`;
+  if (n >= 10_000) return `${Math.floor(n / 10_000)}万`;
+  if (n >= 1_000) return `${(n / 1_000).toFixed(1)}K`;
+  return n.toString();
 }
 
 export function langToTag(lang: string): string {
